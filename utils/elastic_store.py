@@ -63,3 +63,11 @@ class ElasticsearchWrapper:
             print(f"Index '{self.index_name}' does not exist.")
 
 
+if __name__ == "__main__":
+    es_wrapper = ElasticsearchWrapper(index_name='dev')
+    es_wrapper.count_num_docs()
+    # es_wrapper.bulk_index_documents_from_dir('/docs')
+
+    # search_results = es_wrapper.search('Brazil')
+    # print(search_results)
+    # es_wrapper.delete_index()
