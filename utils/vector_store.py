@@ -59,9 +59,38 @@ class PineconeWrapper:
         print(f"Upserted {len(vectors)} vectors.")
 
 
+    def query_vectors(self, query_vector: List[float], top_k: int = 10) -> List[Dict]:
+        print(len(query_vector))
+
+        if not self.index:
+            raise RuntimeError("No index connected. Please connect or create an index first.")
+        results = self.index.query(vector=query_vector, top_k=top_k)
+        return results
+
+
+    def delete_vectors(self, ids: List[str]):
+        """        
+        :param ids: List of IDs of vectors to delete.
+        """
+        if not self.index:
+            raise RuntimeError("No index connected. Please connect or create an index first.")
+        self.index.delete(ids=ids)
+        print(f"Deleted vectors with IDs: {ids}.")
+
+    def delete_index(self, index_name: str):
+        """
+        :param index_name: Name of the index to delete.
+        """
+        # if index_name not in self.pc.list_indexes():
+        #     raise ValueError(f"Index '{index_name}' does not exist.")
+        self.pc.delete_index(index_name)
+        print(f"Index '{index_name}' deleted.")
+
+
+
 if __name__ == "__main__":
     pc = PineconeWrapper()
-    pc.create_index("test", 1024)
+    # pc.create_index("test", 1024)
     pc.connect_index(index_name="test")
-    vectors = np.random.randint(0, 10, (100, 1024))
-    pc.upsert_vectors(vectors.tolist())
+    # vectors = np.random.randint(0, 10, (100, 1024))
+    # pc.upsert_vectors(vectors.tolist())
