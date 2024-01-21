@@ -71,3 +71,126 @@ class NLPTokenizer:
     def addUserDict(self, fnm):
         self.loadDict_(fnm)
 
+    def _strQ2B(self, ustring):
+        """Convert the full width string to half width"""
+        rstring = ""
+        for uchar in ustring:
+            inside_code = ord(uchar)
+            if inside_code == 0x3000:
+                inside_code = 0x0020
+            else:
+                inside_code -= 0xfee0
+            if inside_code < 0x0020 or inside_code > 0x7e:
+                rstring += uchar
+            else:
+                rstring += chr(inside_code)
+        return rstring
+
+    def _tradi2simp(self, line):
+        return HanziConv.toSimplified(line)
+
+    def dfs_(self, chars, s, preTks, tkslist):
+        MAX_L = 10
+        res = s
+        # if s > MAX_L or s>= len(chars):
+        if s >= len(chars):
+            tkslist.append(preTks)
+            return res
+
+        # pruning
+        S = s + 1
+        if s + 2 <= len(chars):
+            t1, t2 = "".join(chars[s:s + 1]), "".join(chars[s:s + 2])
+            if self.trie_.has_keys_with_prefix(self.key_(t1)) and not self.trie_.has_keys_with_prefix(
+                    self.key_(t2)):
+                S = s + 2
+        if len(preTks) > 2 and len(
+                preTks[-1][0]) == 1 and len(preTks[-2][0]) == 1 and len(preTks[-3][0]) == 1:
+            t1 = preTks[-1][0] + "".join(chars[s:s + 1])
+            if self.trie_.has_keys_with_prefix(self.key_(t1)):
+                S = s + 2
+
+        ################
+        for e in range(S, len(chars) + 1):
+            t = "".join(chars[s:e])
+            k = self.key_(t)
+
+            if e > s + 1 and not self.trie_.has_keys_with_prefix(k):
+                break
+
+            if k in self.trie_:
+                pretks = copy.deepcopy(preTks)
+                if k in self.trie_:
+                    pretks.append((t, self.trie_[k]))
+                else:
+                    pretks.append((t, (-12, '')))
+                res = max(res, self.dfs_(chars, e, pretks, tkslist))
+
+        if res > s:
+            return res
+
+        t = "".join(chars[s:s + 1])
+        k = self.key_(t)
+        if k in self.trie_:
+            preTks.append((t, self.trie_[k]))
+        else:
+            preTks.append((t, (-12, '')))
+
+        return self.dfs_(chars, s + 1, preTks, tkslist)
+
+    def freq(self, tk):
+        k = self.key_(tk)
+        if k not in self.trie_:
+            return 0
+        return int(math.exp(self.trie_[k][0]) * self.DENOMINATOR + 0.5)
+
+    def tag(self, tk):
+        k = self.key_(tk)
+        if k not in self.trie_:
+            return ""
+        return self.trie_[k][1]
+
+    def score_(self, tfts):
+        B = 30
+        F, L, tks = 0, 0, []
+        for tk, (freq, tag) in tfts:
+            F += freq
+            L += 0 if len(tk) < 2 else 1
+            tks.append(tk)
+        F /= len(tks)
+        L /= len(tks)
+        if self.DEBUG:
+            print("[SC]", tks, len(tks), L, F, B / len(tks) + L + F)
+        return tks, B / len(tks) + L + F
+
+    def sortTks_(self, tkslist):
+        res = []
+        for tfts in tkslist:
+            tks, s = self.score_(tfts)
+            res.append((tks, s))
+        return sorted(res, key=lambda x: x[1], reverse=True)
+
+    def merge_(self, tks):
+        patts = [
+            (r"[ ]+", " "),
+            (r"([0-9\+\.,%\*=-]) ([0-9\+\.,%\*=-])", r"\1\2"),
+        ]
+        # for p,s in patts: tks = re.sub(p, s, tks)
+
+        # if split chars is part of token
+        res = []
+        tks = re.sub(r"[ ]+", " ", tks).split(" ")
+        s = 0
+        while True:
+            if s >= len(tks):
+                break
+            E = s + 1
+            for e in range(s + 2, min(len(tks) + 2, s + 6)):
+                tk = "".join(tks[s:e])
+                if re.search(self.SPLIT_CHAR, tk) and self.freq(tk):
+                    E = e
+            res.append("".join(tks[s:E]))
+            s = E
+
+        return " ".join(res)
+
