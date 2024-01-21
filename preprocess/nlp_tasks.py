@@ -194,3 +194,53 @@ class NLPTokenizer:
 
         return " ".join(res)
 
+    def maxForward_(self, line):
+        res = []
+        s = 0
+        while s < len(line):
+            e = s + 1
+            t = line[s:e]
+            while e < len(line) and self.trie_.has_keys_with_prefix(
+                    self.key_(t)):
+                e += 1
+                t = line[s:e]
+
+            while e - 1 > s and self.key_(t) not in self.trie_:
+                e -= 1
+                t = line[s:e]
+
+            if self.key_(t) in self.trie_:
+                res.append((t, self.trie_[self.key_(t)]))
+            else:
+                res.append((t, (0, '')))
+
+            s = e
+
+        return self.score_(res)
+
+    def maxBackward_(self, line):
+        res = []
+        s = len(line) - 1
+        while s >= 0:
+            e = s + 1
+            t = line[s:e]
+            while s > 0 and self.trie_.has_keys_with_prefix(self.rkey_(t)):
+                s -= 1
+                t = line[s:e]
+
+            while s + 1 < e and self.key_(t) not in self.trie_:
+                s += 1
+                t = line[s:e]
+
+            if self.key_(t) in self.trie_:
+                res.append((t, self.trie_[self.key_(t)]))
+            else:
+                res.append((t, (0, '')))
+
+            s -= 1
+
+        return self.score_(res[::-1])
+
+    def english_normalize_(self, tks):
+        return [self.stemmer.stem(self.lemmatizer.lemmatize(t)) if re.match(r"[a-zA-Z_-]+$", t) else t for t in tks]
+
