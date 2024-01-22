@@ -1,3 +1,4 @@
+from langchain_voyageai import VoyageAIEmbeddings
 from typing import List
 from abc import ABC
 
@@ -82,14 +83,14 @@ if __name__ == "__main__":
     processor = EmbeddingProcessor(api_key=api_key, model=model)
     
 
-    documents = [
-        "The fox ran out with the cat",
-        "Ant was accumulating food in its hideout",
-        "The lion was hunting for food near the river",
-        "The herbivorous animals like deer, giraffe and elephant are careful not to become prey",
-        "Most herbivore animals can run very fast"
-    ]
+    # documents = [
+    #     "The fox ran out with the cat",
+    #     "Ant was accumulating food in its hideout",
+    #     "The lion was hunting for food near the river",
+    #     "The herbivorous animals like deer, giraffe and elephant are careful not to become prey",
+    #     "Most herbivore animals can run very fast"
+    # ]
     
-    embeddings = processor.embed_documents(documents)
+    # embeddings = processor.embed_documents(documents)
     
-    processor.print_embedding_info(embeddings)
+    # processor.print_embedding_info(embeddings)
