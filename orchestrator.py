@@ -45,7 +45,6 @@ pinecone_retriever = vector_store.as_retriever(
 )
 
 
-
        
 es_client = Elasticsearch(['localhost:9200'], basic_auth=('elastic', 'changeme'))
  
@@ -69,3 +68,29 @@ bm25_retriever = ElasticsearchRetriever.from_es_params(
     username="elastic",
     password="changeme"
 )
+
+
+
+from langchain.retrievers import ContextualCompressionRetriever
+from langchain.retrievers.document_compressors import CrossEncoderReranker
+from langchain_community.cross_encoders import HuggingFaceCrossEncoder
+
+
+model = HuggingFaceCrossEncoder(model_name="BAAI/bge-reranker-base")
+
+compressor = CrossEncoderReranker(model=model, top_n=5)
+pinecone_retriever = ContextualCompressionRetriever(
+    base_compressor=compressor, base_retriever=pinecone_retriever
+)
+
+
+bm25_retriever = ContextualCompressionRetriever(
+    base_compressor=compressor, base_retriever=bm25_retriever
+)
+
+
+ensemble_retriever = EnsembleRetriever(
+    retrievers=[bm25_retriever, pinecone_retriever], weights=[0.7, 0.3]
+)
+
+
