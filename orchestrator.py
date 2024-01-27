@@ -109,3 +109,40 @@ llm = ChatAnthropic(
 )
 
 
+
+
+template = """Answer the question in detail and elaborately based only on the following context :
+
+
+{context}
+
+Question: {question}
+"""
+
+
+prompt = ChatPromptTemplate.from_template(template)
+
+
+
+from langchain.chains import RetrievalQA
+
+
+qa_chain = RetrievalQA.from_chain_type(  
+    llm=llm,  
+    chain_type="stuff",  
+    retriever=ensemble_retriever,
+    chain_type_kwargs={
+        "prompt": prompt
+    }
+)
+
+
+from langchain.chains import RetrievalQAWithSourcesChain
+qa_chain_sources = RetrievalQAWithSourcesChain.from_chain_type(
+    llm=llm,
+    chain_type="stuff",
+    retriever=bm25_retriever
+    # chain_type_kwargs={
+    #     "prompt": prompt
+    # }
+)
