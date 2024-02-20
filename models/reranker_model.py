@@ -30,3 +30,26 @@ class ReRanker:
             base_compressor=compressor, base_retriever=retriever
         )
         return reranked_retriever
+
+
+    def print_ranking(self, ranked_docs: Dict[str, float]):
+        """
+        Print the re-ranked documents along with their scores.
+        
+        :param ranked_docs: Dictionary containing documents and their relevance scores.
+        """
+        for doc, score in ranked_docs.items():
+            print(f"Document: {doc}")
+            print(f"Relevance Score: {score}\n")
+
+
+
+if __name__ == "__main__":
+    model_name = "cross-encoder/ms-marco-MiniLM-L-6-v2"
+    reranker = ReRanker(model_name=model_name)
+    
+    query = ""
+    documents = []
+    
+    ranked_docs = reranker.rerank(query=query, documents=documents)
+
