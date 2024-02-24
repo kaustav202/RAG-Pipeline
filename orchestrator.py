@@ -24,3 +24,17 @@ contextual_compressor = ReRanker()
 semantic_retriever_reranked = contextual_compressor.apply_compression(semantic_retriever)
 
 bm25_retriever_reranked = contextual_compressor.apply_compression(bm25_retriever)
+
+hybrid = HybridRetriever(bm25_retriever,semantic_retriever_reranked)
+
+ensemble_retriever = hybrid.create_ensemble_retriever(weights=[0.5,0.5])
+
+
+# docs = bm25_retriever.invoke("What is the population of France?")
+
+# print(docs)
+
+
+# docs = ensemble_retriever.invoke("What is the population of Egypt?")
+
+# print(docs)
