@@ -44,3 +44,46 @@ text_splitter = RecursiveCharacterTextSplitter(
     length_function=len,
     is_separator_regex=False,
 )
+# text_splitter = CharacterTextSplitter(chunk_size=700, chunk_overlap=4)
+# docs = text_splitter.split_documents(documents)
+
+# docs = text_splitter.create_documents([text])
+
+# final_texts = []
+
+# for i in docs:
+#     c = str(i)
+#     final_texts.append(c)
+
+
+
+def ret_docs(ft, id="raw"):
+    doc_list = []
+
+    for text in ft:
+        cid = id + "_" + str(uuid4())
+        document = Document( page_content=text, metadata={"source": cid})
+        doc_list.append(document)
+    
+    return doc_list
+
+
+
+voyage_api_key = os.getenv('VOYAGE_KEY')
+embedding_model = "voyage-law-2"
+# processor = EmbeddingProcessor(api_key=voyage_api_key, model=embedding_model)
+
+
+# embeddings = processor.embed_documents(final_texts)
+
+
+def assign_ids_to_lists(nested_lists):
+    result = []
+    for index, nested_list in enumerate(nested_lists, start=1):
+        serial_id = f"id{index}"
+        metadata = {"created_at" : "04-09-2024"}
+        result.append((serial_id, nested_list, metadata))
+    
+    return result
+
+
