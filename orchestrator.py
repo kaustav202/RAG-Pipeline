@@ -60,12 +60,12 @@ chains = Chain(llm=llm, retriever=ensemble_retriever)
 
 base_qna_chain = chains.qna_chain(prompt=prompt)
 
-inference = base_qna_chain.run("input")
+# inference = base_qna_chain.run("input")
 
 
 qna_sources_chain = chains.qna_sources_chain(prompt=prompt)
 
-inference_s = qna_sources_chain("input")
+# inference_s = qna_sources_chain("input")
 
 #Meta class :
 
@@ -77,3 +77,61 @@ inference_s = qna_sources_chain("input")
 
 
 
+
+
+def prompt_sp():
+    s = '''
+    '''
+    return s
+
+
+def prompt_gen():
+    s = '''
+    '''
+    return s
+
+
+def get_prompt():
+    ps = prompt_sp()
+    pg = prompt_gen()
+    ins = '''
+Use one of the following prompts, PROMPT1 or PROMPT2 , depending on the type of given input query. If the question asks about a specific person or entity use PROMPT1. If the question asked is a generic or situational use PROMPT2.
+PROMPT1: {}
+
+PROMPT2: {}
+'''.format(ps, pg)
+    return ins
+
+
+from langchain.agents import AgentExecutor, create_react_agent , Tool, initialize_agent , create_tool_calling_agent
+
+tools = [
+    Tool(
+        name = "Get_Information",
+        func = base_qna_chain.run,
+        description = "Use this Tool to lookup information on input query"
+    ),
+    Tool(
+        name = "Retriever_Vec",
+        func = semantic_retriever_reranked.invoke,
+        description = "Use this retriever lookup information using Vector Retriever.Input to this tool must be a SINGLE JSON STRING"
+    ),
+    Tool(
+        name = "Retriever_Key",
+        func = bm25_retriever_reranked.invoke,
+        description = "Use this retriever lookup information using Elastic Search Retriever.Input to this tool must be a SINGLE JSON STRING"
+    )
+]
+
+
+from langchain.tools.retriever import create_retriever_tool
+
+retriever_tool = create_retriever_tool(
+    ensemble_retriever,
+    "Native_Retriever",
+    "Search for information using Native Retriever. Forinformation about any questions , you must use this tool!"
+)
+
+
+
+# tools = [retriever_tool]
