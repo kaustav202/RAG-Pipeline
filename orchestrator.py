@@ -191,3 +191,46 @@ Begin!
 
 Question: {input}
 '''
+
+agent = create_react_agent(llm,
+                           tools,
+                           prompt_agent)
+
+agent_executor = AgentExecutor(tools=tools,
+                         agent=agent,
+                         handle_parsing_errors=True,
+                         verbose=True)
+
+
+# agent = create_tool_calling_agent(llm, tools, prompt_agent)
+
+# agent = initialize_agent(tools,
+#                          llm,
+#                          agent="zero-shot-react-description",
+#                          verbose=True)
+
+
+t = '''/n input_variables=['agent_scratchpad', 'input'] optional_variables=['chat_history'] 
+input_types={'chat_history': typing.List[typing.Union[langchain_core.messages.ai.AIMessage, langchain_core.messages.human.HumanMessage, langchain_core.messages.chat.ChatMessage, langchain_core.messages.system.SystemMessage, langchain_core.messages.function.FunctionMessage, langchain_core.messages.tool.ToolMessage]], 
+'agent_scratchpad': typing.List[typing.Union[langchain_core.messages.ai.AIMessage, langchain_core.messages.human.HumanMessage, langchain_core.messages.chat.ChatMessage, langchain_core.messages.system.SystemMessage, langchain_core.messages.function.FunctionMessage, langchain_core.messages.tool.ToolMessage]]} 
+partial_variables={'chat_history': []} metadata={'lc_hub_owner': 'hwchase17', 'lc_hub_repo': 'openai-functions-agent', 'lc_hub_commit_hash': 'a1655024b06afbd95d17449f21316291e0726f13dcfaf990cc0d18087ad689a5'} 
+messages=[SystemMessagePromptTemplate(prompt=PromptTemplate(input_variables=[], template='You are a helpful assistant')), MessagesPlaceholder(variable_name='chat_history', optional=True), 
+HumanMessagePromptTemplate(prompt=PromptTemplate(input_variables=['input'], template='{input}')), MessagesPlaceholder(variable_name='agent_scratchpad')]"
+'''
+
+
+prompt_exec = ChatPromptTemplate.from_template(t)
+
+
+
+from langchain import hub
+
+
+prompt_nr = hub.pull("hwchase17/openai-functions-agent")
+
+agent_nr = create_tool_calling_agent(llm, tools, prompt_nr)
+
+#from langchain.agents import AgentExecutor
+
+executor_nr = AgentExecutor(agent=agent, tools=tools, verbose=True)
+
