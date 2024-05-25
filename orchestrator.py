@@ -234,3 +234,28 @@ agent_nr = create_tool_calling_agent(llm, tools, prompt_nr)
 
 executor_nr = AgentExecutor(agent=agent, tools=tools, verbose=True)
 
+# executor_nr.invoke({"input": "Find information about the company"})
+
+
+
+# r = agent.invoke("Find information about the company")
+
+# print('r',r['output'])
+# Create an agent executor by passing in the agent and tools
+# agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True, return_intermediate_steps=True, handle_parsing_errors=True, max_iterations=10)
+
+
+zs_agent = initialize_agent(tools,
+                    llm,
+                    agent="zero-shot-react-description",
+                agent_kwargs={
+'prefix': get_prompt() },
+                    verbose=True)
+
+
+# r = zs_agent.invoke("Find information about the company")
+
+# print("\n\nPrompt\n\n", zs_agent.agent.llm_chain.prompt.template, end="\n\n")
+print(type(zs_agent.agent.llm_chain.prompt.template))
+
+
