@@ -259,3 +259,51 @@ zs_agent = initialize_agent(tools,
 print(type(zs_agent.agent.llm_chain.prompt.template))
 
 
+
+
+def wrapper_function(input_string, prompt):
+    try:
+        # zs_agent = initialize_agent(tools,
+        #                  llm,
+        #                  agent="zero-shot-react-description",
+        #                 agent_kwargs={
+        # 'prefix': get_prompt() },
+        #                  verbose=True)
+
+        r = executor_nr.invoke({"input": input_string})
+
+        # print("\n\nPrompt\n\n", zs_agent.agent.llm_chain.prompt.template, end="\n\n")
+        # print(type(zs_agent.agent.llm_chain.prompt.template))
+        # r = zs_agent.invoke(input_string)
+    except:
+        r = {'output' : 'I was not able to find enough context to answer that question , please try reframing the question' }
+    docs = ensemble_retriever.invoke(input_string)
+    try:
+        source_list = []
+
+        for x in docs:
+            x = x.metadata
+            if 'source' in x:
+                cf = x['source']
+
+            if '_source' in x:
+                cf = x['_source']['source']
+
+            ind = cf.rfind('_')
+            cleaned = cf[:ind]
+            cleaned = cleaned.replace('_','/')
+            source_list.append(cleaned)
+
+
+    except:
+        print("\n Not Found \n")
+        pass
+
+    source_list = list(set(source_list))
+
+    markdown_text = "\n".join([f"[{s}](https://{s})" for s in source_list])
+
+    return r['output'], markdown_text
+
+
+
