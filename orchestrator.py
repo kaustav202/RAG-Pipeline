@@ -307,3 +307,15 @@ def wrapper_function(input_string, prompt):
 
 
 
+import gradio as gr
+
+
+interface = gr.Interface(
+    fn=wrapper_function,
+    inputs=[gr.Textbox(label="Query"), gr.Textbox(label="Prompt") ],
+    outputs=[gr.Textbox(label="Processed String"), gr.Markdown(label="Source Files")]
+)
+
+
+
+interface.launch(share = True)
