@@ -14,3 +14,4 @@ An end-to-end AI chat agent interface, with Retrieval Augmented Generation based
 - Supports Partial updates or full updates to the knowledge base, by triggering an entirely separate updation pipeline.
 - Advanced tokentization mechanism, using nlp based sentence tokenizer, preserving contextual meaning in each token leading to more relavant embeddings and improved retrieval.
 - Awesome UI with the ability to play around various configurations of the system, and dynamically change the system's technical behaviour to own requirements. Also has a prompt engineering suite.
+- Fully configurable infrastructure, allowing custom choice of LLMs, Embedding Model, and Reranking Model. Choice of vectore database and search engine to be used. Also supports local inferencing engines using ollama and onnx runtime.
