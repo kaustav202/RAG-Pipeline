@@ -10,3 +10,7 @@ An end-to-end AI chat agent interface, with Retrieval Augmented Generation based
 - Customizable prompt augmentation with the input query, allowing creation of smart agents that can automate a given task or workflow.
 - Usage of graph database in retrieval stage , utilizing graph-search algorithms for even better retrieval relevancy and also for predicting search krywords, topic recommendation to the user.
 - LLM Memory chaining and Session based login, ensuring context is maintained across current session and also previous chat history of the user.
+- Secure User login and authentication system with encrypted using Keycloack Identity and access management for isolated credentials storage.
+- Supports Partial updates or full updates to the knowledge base, by triggering an entirely separate updation pipeline.
+- Advanced tokentization mechanism, using nlp based sentence tokenizer, preserving contextual meaning in each token leading to more relavant embeddings and improved retrieval.
+- Awesome UI with the ability to play around various configurations of the system, and dynamically change the system's technical behaviour to own requirements. Also has a prompt engineering suite.
