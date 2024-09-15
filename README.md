@@ -15,3 +15,5 @@ An end-to-end AI chat agent interface, with Retrieval Augmented Generation based
 - Advanced tokentization mechanism, using nlp based sentence tokenizer, preserving contextual meaning in each token leading to more relavant embeddings and improved retrieval.
 - Awesome UI with the ability to play around various configurations of the system, and dynamically change the system's technical behaviour to own requirements. Also has a prompt engineering suite.
 - Fully configurable infrastructure, allowing custom choice of LLMs, Embedding Model, and Reranking Model. Choice of vectore database and search engine to be used. Also supports local inferencing engines using ollama and onnx runtime.
+- The graph database comes in handy to augment the other searches with a more nuanced understanding of the data, thus providing them loose guidelines. Also when need to keep track of the relationships is critical or part of the system requirements ( this can be extended to ai text to query service in relational databases)
+- The graph database also comes with a schematic search on the graph itself, leveraging contextual meaning of nodes and relationships in the search.
